@@ -34,10 +34,10 @@ namespace BillofQuantities
         static List<ElementType> ETypes = new List<ElementType>();
 
         //Additional Instance Parameters
-        List<string> paramNamesEI = new List<string>(new string[] { "Volume", "Area", "Length" });
+        public static List<string> paramNamesEI = new List<string>(new string[] { "Volume", "Area", "Length" });
 
-        internal List<ListET> ETS = null;
-        internal List<ListEI> EIS = null;
+        internal static List<ListET> ETS = null;
+        internal static List<ListEI> EIS = null;
 
         static bool IsMissing = true;
 
@@ -103,8 +103,83 @@ namespace BillofQuantities
 
             #endregion // Report docTitle
 
-            #region Data EI
+            List<ListEI> EIData = retrieveDataEI();
 
+            List<ListET> ETData = retrieveDataET(uiapp);
+
+            //Lauch Excel
+            ExcelUtils.LauchExcel();
+            ExcelUtils.PreventInteraction();
+
+            if (InputData.instancesSheet == true)
+            {
+                sw_EI.Restart();
+                ExcelUtils.CreateInstancesSpreadsheet(paramNamesEI, EIData);
+                sw_EI.Stop();
+            }
+            if (InputData.elementTypesSheet == true)
+            {
+                sw_ET.Restart();
+                ExcelUtils.CreateElementTypesSpreadsheet(ETData);
+                sw_ET.Stop();
+            }
+            if (InputData.billofQuantitiesSheet == true)
+            {
+                sw_MQ.Restart();
+                ExcelUtils.CreateBillofQuantitiesSpreadsheet(uiapp, ETS, docTitle);
+                sw_MQ.Stop();
+            }
+
+            ExcelUtils.EnableInteraction();
+
+            Evaluation(InputData.folderPath);
+        }
+
+        #region Evaluation Method
+        public void Evaluation(string folderPath)
+        {
+            sw.Stop(); // stops measuring the time taken for the task
+
+            #region Evaluation
+
+            //Dialog Box to inform the user that there are missing elements' classifications
+            if (IsMissing == false)
+                TaskDialog.Show("Bill of Quantities Export",
+                    string.Format("Type elements with one or more Assembly Code or Keynote parameter values are missing. " +
+                    "Before running make sure to fill in all parameter values for all element types.\n" +
+                    "For more info check the report: " + folderPath + @"\ClassReport_" + docTitle + ".txt\n" +
+                    "The export is finished. Time: " + sw.Elapsed.TotalSeconds + " seconds.\n" +
+                    //"Tempo Tabelas EI e ET " + sw_EI_ET.Elapsed.TotalSeconds +
+                    "\nTime table MQ " + sw_MQ.Elapsed.TotalSeconds + ":\nTime Data " + sw_Data.Elapsed.TotalSeconds +
+                    ":\nTime desc unid " + sw_descunid.Elapsed.TotalSeconds + ", Time Quant " + sw_Quant.Elapsed.TotalSeconds));
+
+            //Dialog Box to inform the user that all elements' classifications have been found
+            else
+            {
+                TaskDialog.Show("Bill of Quantities Export",
+                    string.Format("All Element Type's Assembly Code's and Keynote's were found.\n" +
+                    "For more info check the report: " + folderPath + @"\ClassReport_" + docTitle + ".txt\n" +
+                    "The export is finished. Time: " + sw.Elapsed.TotalSeconds + " seconds.\n" +
+                    //"Time tables EI and ET " + sw_EI_ET.Elapsed.TotalSeconds +
+                    "\nTime table MQ " + sw_MQ.Elapsed.TotalSeconds + ":\nTime Data " + sw_Data.Elapsed.TotalSeconds +
+                    ":\nTime desc unid " + sw_descunid.Elapsed.TotalSeconds + ", Time Quant " + sw_Quant.Elapsed.TotalSeconds));
+
+                // writes on the .txt report that there are no parameters to classify
+                writetxt.WriteLine($"No parameter to classify\n");
+            }
+
+            writetxt.WriteLine($"\r\n");
+            writetxt.Close(); // closes the report
+
+            #endregion // Evaluation
+        }
+
+        #endregion //Evaluation Method
+
+        #region Data EI
+
+        public static List<ListEI> retrieveDataEI()
+        {
             List<ElementId> ElementIdEI = new List<ElementId>();
 
             EIS = new List<ListEI>();
@@ -152,9 +227,15 @@ namespace BillofQuantities
             //Sorts EIS by TypeNameId
             var EISSorted = EIS.AsQueryable().OrderBy(eI => eI.TypeNameId).ToList();
 
-            #endregion // Data EI
+            return EISSorted;
+        }
 
-            #region Data ET
+        #endregion // Data EI
+
+        #region Data ET
+
+        public static List<ListET> retrieveDataET(UIApplication uiapp)
+        {
 
             ETS = new List<ListET>();
 
@@ -208,7 +289,7 @@ namespace BillofQuantities
                 {
                     foreach (Element eI in ListEI)
                     {
-                        if (eI.LookupParameter(paramName) != null) 
+                        if (eI.LookupParameter(paramName) != null)
                         {
                             Parameter p = eI.LookupParameter(paramName);
 
@@ -250,73 +331,9 @@ namespace BillofQuantities
             //Sorts ETS lists by ID
             var ETSSorted = ETS.AsQueryable().OrderBy(eT => eT.ID).ToList();
 
-            #endregion Data ET
-
-            //Lauch Excel
-            ExcelUtils.LauchExcel();
-            ExcelUtils.PreventInteraction();
-
-            if (InputData.instancesSheet == true)
-            {
-                sw_EI.Restart();
-                ExcelUtils.CreateInstancesSpreadsheet(paramNamesEI, EISSorted);
-                sw_EI.Stop();
-            }
-            if (InputData.elementTypesSheet == true)
-            {
-                sw_ET.Restart();
-                ExcelUtils.CreateElementTypesSpreadsheet(ETSSorted);
-                sw_ET.Stop();
-            }
-            if (InputData.billofQuantitiesSheet == true)
-            {
-                sw_MQ.Restart();
-                ExcelUtils.CreateBillofQuantitiesSpreadsheet(uiapp, ETS, docTitle);
-                sw_MQ.Stop();
-            }
-
-            ExcelUtils.EnableInteraction();
-
-            Evaluation(InputData.folderPath);
+            return ETSSorted;
         }
-
-        public void Evaluation(string folderPath)
-        {
-            sw.Stop(); // stops measuring the time taken for the task
-
-            #region Evaluation
-
-            //Dialog Box to inform the user that there are missing elements' classifications
-            if (IsMissing == false)
-                TaskDialog.Show("Bill of Quantities Export",
-                    string.Format("Type elements with one or more Assembly Code or Keynote parameter values are missing. " +
-                    "Before running make sure to fill in all parameter values for all element types.\n" +
-                    "For more info check the report: " + folderPath + @"\ClassReport_" + docTitle + ".txt\n" +
-                    "The export is finished. Time: " + sw.Elapsed.TotalSeconds + " seconds.\n" +
-                    //"Tempo Tabelas EI e ET " + sw_EI_ET.Elapsed.TotalSeconds +
-                    "\nTime table MQ " + sw_MQ.Elapsed.TotalSeconds + ":\nTime Data " + sw_Data.Elapsed.TotalSeconds +
-                    ":\nTime desc unid " + sw_descunid.Elapsed.TotalSeconds + ", Time Quant " + sw_Quant.Elapsed.TotalSeconds));
-
-            //Dialog Box to inform the user that all elements' classifications have been found
-            else
-            {
-                TaskDialog.Show("Bill of Quantities Export",
-                    string.Format("All Element Type's Assembly Code's and Keynote's were found.\n" +
-                    "For more info check the report: " + folderPath + @"\ClassReport_" + docTitle + ".txt\n" +
-                    "The export is finished. Time: " + sw.Elapsed.TotalSeconds + " seconds.\n" +
-                    //"Time tables EI and ET " + sw_EI_ET.Elapsed.TotalSeconds +
-                    "\nTime table MQ " + sw_MQ.Elapsed.TotalSeconds + ":\nTime Data " + sw_Data.Elapsed.TotalSeconds +
-                    ":\nTime desc unid " + sw_descunid.Elapsed.TotalSeconds + ", Time Quant " + sw_Quant.Elapsed.TotalSeconds));
-
-                // writes on the .txt report that there are no parameters to classify
-                writetxt.WriteLine($"No parameter to classify\n");
-            }
-
-            writetxt.WriteLine($"\r\n");
-            writetxt.Close(); // closes the report
-
-            #endregion // Evaluation
-        }
+        #endregion Data ET
 
         #region Data MQ
 
