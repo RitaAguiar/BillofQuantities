@@ -440,7 +440,7 @@ namespace BillofQuantities
             if (p != null)
             {
                 pValue = GetParameterValue(p);
-                if(pValue == "")
+                if(pValue == "" || pValue == null)
                 {
                     IsMissing = false;
                     return "MISSING";
