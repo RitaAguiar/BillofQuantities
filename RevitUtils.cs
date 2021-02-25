@@ -79,17 +79,13 @@ namespace BillofQuantities
                 .Select(e => e.GetTypeId()) // selects and retrives the Element Type Ids
                 .Distinct();
 
-            #endregion // Filters
-
-            #region Distinct TypeIds
-
             foreach (ElementId eTId in collectorET)
             {
                 ElementType eT = doc.GetElement(eTId) as ElementType;
                 ETypes.Add(eT);
             }
 
-            #endregion Distinct TypeIds
+            #endregion // Filters
 
             #region Report docTitle
 
@@ -126,7 +122,7 @@ namespace BillofQuantities
             if (InputData.billofQuantitiesSheet == true)
             {
                 sw_MQ.Restart();
-                ExcelUtils.CreateBillofQuantitiesSpreadsheet(uiapp, ETS, docTitle);
+                ExcelUtils.CreateBillofQuantitiesSpreadsheet(uiapp, ETData, docTitle);
                 sw_MQ.Stop();
             }
 
