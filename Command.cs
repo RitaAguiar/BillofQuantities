@@ -67,8 +67,6 @@ namespace BillofQuantities
     [Transaction(TransactionMode.ReadOnly)]
     public class Command : IExternalCommand
     {
-        public string IncomingValue { get; set; }
-
         Result IExternalCommand.Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             //Calls Modeless Form
