@@ -41,6 +41,9 @@ namespace BillofQuantities
 
         static bool IsMissing = true;
 
+        //KeyBasedTreeEntries
+        static KeyBasedTreeEntries Kbte = null;
+
         //MAIN METHOD
         public void CreateBillOfQuantities(UIApplication uiapp)
         {
@@ -99,9 +102,9 @@ namespace BillofQuantities
 
             #endregion // Report docTitle
 
-            List<EI> EIData = retrieveDataEI();
+            List<EI> EIData = RetrieveDataEI();
 
-            List<ET> ETData = retrieveDataET(uiapp);
+            List<ET> ETData = RetrieveDataET(uiapp);
 
             //Lauch Excel
             ExcelUtils.LauchExcel();
@@ -174,7 +177,7 @@ namespace BillofQuantities
 
         #region Data EI
 
-        public static List<EI> retrieveDataEI()
+        public static List<EI> RetrieveDataEI()
         {
             List<ElementId> ElementIdEI = new List<ElementId>();
 
@@ -183,27 +186,7 @@ namespace BillofQuantities
             foreach (Element eI in CollectorEI)
             {
                 var EI = new EI(eI);
-                //{
-                //    ID = eI.Id.IntegerValue,
-                //    IsType = 0,
-                //    CategoryName = eI.Category.Name,
-                //    TypeName = eI.Name,
-                //    TypeNameId = eI.GetTypeId().IntegerValue,
-                //};
-
-                //try // eI is a Family Instance - eI as FamilySymbol to get its FamilyName
-                //{
-                //    FamilyInstance eIFamilyInstance = eI as FamilyInstance;
-                //    FamilySymbol eIFamilySymbol = eIFamilyInstance.Symbol;
-                //    Family eIFamily = eIFamilySymbol.Family;
-                //    string eIFamilyName = eIFamily.Name;
-                //    EI.FamilyName = eIFamilyName;
-                //}
-                //catch // eI is not a Family Instance
-                //{
-                //    EI.FamilyName = "*NA*";
-                //}
-
+                
                 foreach (string paramName in paramNamesEI)
                 {
                     string paramValue = "*NA*";
@@ -230,56 +213,15 @@ namespace BillofQuantities
 
         #region Data ET
 
-        public static List<ET> retrieveDataET(UIApplication uiapp)
+        public static List<ET> RetrieveDataET(UIApplication uiapp)
         {
+            Kbte = GetKeynoteEntries(uiapp);
 
             ETS = new List<ET>();
 
             foreach (Element eT in ETypes)
             {
                 var ET = new ET(eT, CollectorEI);
-
-                //try
-                //{
-                //    ET.ID = eT.Id.IntegerValue;
-                //    ET.IsType = eT is ElementType ? 1 : 0;
-                //    ET.CategoryName = eT.Category.Name;
-                //    ET.CategoryId = eT.Category.Id.IntegerValue;
-                //    ET.TypeName = eT.Name;
-                //}
-                //catch
-                //{
-                //    ET.ID = -1;
-                //    ET.IsType = eT is ElementType ? 1 : 0;
-                //    ET.CategoryName = "*NA*";
-                //    ET.CategoryId = -1;
-                //    ET.TypeName = "*NA*";
-                //}
-
-                //try
-                //{
-                //    FamilySymbol eTFamilySymbol = eT as FamilySymbol; // FamilySymbol of eT
-                //    string eTFamilyName = eTFamilySymbol.FamilyName; //  FamilyName of eTFamilySymbol
-                //    ET.FamilyName = eTFamilyName;
-                //}
-                //catch
-                //{
-                //    ET.FamilyName = "*NA*"; // eT does not have a FamilyName
-                //}
-
-                //new ListEI with all instances of Type Id
-                //List<Element> ListEI = new List<Element>();
-                //try
-                //{
-                //    ListEI = CollectorEI.Where(q => q.GetTypeId() == eT.Id).ToList();
-                //}
-                //catch
-                //{
-                //    When the Id is -1 it means the elements belong to the Parts Category
-                //   ListEI = CollectorEI.Where(q => q.GetTypeId().IntegerValue == -1).ToList();
-                //}
-
-                //ET.Quantity = ET.InstancesOfType.Count();
 
                 foreach (string paramName in paramNamesEI)
                 {
@@ -296,34 +238,6 @@ namespace BillofQuantities
                         }
                     }
                 }
-
-                // Element Type's cost per unit
-                try
-                {
-                    ET.Cost = GetParameterValue(eT.LookupParameter("Cost"));
-                }
-                catch
-                {
-                    ET.Cost = "*NA*";
-                }
-
-                //Unit of Cost should depend on a table the user inputs
-                //saying what units he wants for each category...
-                //ET.Unit = "m3";
-
-                #region Classification
-
-                ET.AssemblyCode = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_CODE);
-                ET.AssemblyDesc = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_DESCRIPTION);
-                ET.KeyValue = GetBuiltInParamValue(eT, BuiltInParameter.KEYNOTE_PARAM);
-
-                ET.KeyText = GetKeynoteText(ET.KeyValue, uiapp);
-                if (ET.KeyText == null || ET.KeyText == "")
-                {
-                    ET.KeyText = "MISSING";
-                }
-
-                #endregion // Classification
 
                 ETS.Add(ET);
             }
@@ -366,7 +280,7 @@ namespace BillofQuantities
                     BQ.AssemblyDesc = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_DESCRIPTION);
                     BQ.KeyValue = GetBuiltInParamValue(eT, BuiltInParameter.KEYNOTE_PARAM);
 
-                    BQ.KeyText = GetKeynoteText(BQ.KeyValue, uiapp);
+                    BQ.KeyText = GetKeynoteText(BQ.KeyValue);
                     if (BQ.KeyText == null || BQ.KeyText == "")
                     {
                         BQ.KeyText = "MISSING";
@@ -471,28 +385,21 @@ namespace BillofQuantities
 
         #region GetKeynote Method
 
-        public static string GetKeynoteText(string keyValue, UIApplication uiapp)
+        public static string GetKeynoteText(string keyValue)
         {
-            KeyBasedTreeEntries kbte = GetKeynoteEntries(uiapp);
-
             IEnumerable<KeyBasedTreeEntry> keyValues;
 
             string keynoteText = null;
 
-            keyValues = kbte.Where(k => k.Key.Equals(keyValue));
+            keyValues = Kbte.Where(k => k.Key.Equals(keyValue));
 
             foreach (KeynoteEntry k in keyValues)
-            {
                 keynoteText = k.KeynoteText;
-            }
-            if (keynoteText != "")
-            {
+            
+            if (!string.IsNullOrEmpty(keynoteText))
                 return keynoteText;
-            }
             else
-            {
                 return "MISSING";
-            }
         }
 
         #endregion //GetKeynote

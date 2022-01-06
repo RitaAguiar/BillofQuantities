@@ -73,6 +73,12 @@ namespace BillofQuantities
             (q.GetTypeId() == eT.Id) : (q.GetTypeId().IntegerValue == -1))
                 .ToList(); //    When the Id is -1 it means the elements belong to the Parts Category
             Quantity = InstancesOfType.Count();
+            Cost = eT.LookupParameter("Cost") != null ?
+                RevitUtils.GetParameterValue(eT.LookupParameter("Cost")) : "*NA*";
+            AssemblyCode = RevitUtils.GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_CODE);
+            AssemblyDesc = RevitUtils.GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_DESCRIPTION);
+            KeyValue = RevitUtils.GetBuiltInParamValue(eT, BuiltInParameter.KEYNOTE_PARAM);
+            KeyText = RevitUtils.GetKeynoteText(KeyValue);
         }
     }
 
