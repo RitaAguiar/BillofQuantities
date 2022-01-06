@@ -33,7 +33,7 @@ namespace BillofQuantities
             excel.Interactive = false; //prevents user from interacting with Excel
         }
 
-        public static void CreateInstancesSpreadsheet(List<string> paramNamesEI, List<ListEI> EISSorted)
+        public static void CreateInstancesSpreadsheet(List<string> paramNamesEI, List<EI> EISSorted)
         {
             #region Excel Sheet "Instances"
 
@@ -102,7 +102,7 @@ namespace BillofQuantities
             #endregion OTHER ROWS - Instance Elements
         }
 
-        public static void CreateElementTypesSpreadsheet(List<ListET> ETSSorted)
+        public static void CreateElementTypesSpreadsheet(List<ET> ETSSorted)
         {
             #region Excel Sheet "Element Types"
 
@@ -184,76 +184,76 @@ namespace BillofQuantities
             #endregion OTHER ROWS - ElementTypes
         }
 
-        public static void CreateBillofQuantitiesSpreadsheet(UIApplication uiapp, List<ListET> ETS, string docTitle)
+        public static void CreateBillofQuantitiesSpreadsheet(UIApplication uiapp, List<ET> ETS, string docTitle)
         {
-            List<ListMQ> MQS = RevitUtils.RetrieveMQData(uiapp, ETS);
+            List<BQ> BQS = RevitUtils.RetrieveBQData(uiapp, ETS);
 
             #region Excel Sheet "Bill of Quantities"
 
-            Excel.Worksheet worksheetMQ = (Excel.Worksheet)workbook.Worksheets.Add(); // adds a new worksheet
-            worksheetMQ.Name = "Bill of Quantities"; // worksheetMQ Name
+            Excel.Worksheet worksheetBQ = (Excel.Worksheet)workbook.Worksheets.Add(); // adds a new worksheet
+            worksheetBQ.Name = "Bill of Quantities"; // worksheetBQ Name
 
             #endregion // Launch or access Excel via COM Interop
 
             #region Header formatting
 
             //cells E1 to E10
-            Excel.Range rangeE = worksheetMQ.Range["E1:E10"];
+            Excel.Range rangeE = worksheetBQ.Range["E1:E10"];
             rangeE.Font.Bold = true;
             rangeE.Font.Color = System.Drawing.Color.FromArgb(0, 51, 102);
 
             //merge of cells E1 to E10
-            for (int row = 1; row <= 10; row++) worksheetMQ.Range[worksheetMQ.Cells[row, 5], worksheetMQ.Cells[row, 7]].Merge();
+            for (int row = 1; row <= 10; row++) worksheetBQ.Range[worksheetBQ.Cells[row, 5], worksheetBQ.Cells[row, 7]].Merge();
 
             //cells E2 and E3
-            worksheetMQ.Cells[2, 5] = "REVIT MODEL DOCUMENT";
-            worksheetMQ.Cells[3, 5] = docTitle;
+            worksheetBQ.Cells[2, 5] = "REVIT MODEL DOCUMENT";
+            worksheetBQ.Cells[3, 5] = docTitle;
 
             // cell E9
-            worksheetMQ.Cells[9, 5] = "BILL OF QUANTITIES";
+            worksheetBQ.Cells[9, 5] = "BILL OF QUANTITIES";
 
             // cell E10
             string monthyear = DateTime.Now.ToString("MMMM yyyy", CultureInfo.CurrentCulture).ToUpper();
-            worksheetMQ.Cells[10, 5] = monthyear;
+            worksheetBQ.Cells[10, 5] = monthyear;
 
             #endregion // Header formatting
 
             #region Columns Width
 
-            worksheetMQ.Columns["A:A"].ColumnWidth = 4.57;
-            worksheetMQ.Columns["B:B"].ColumnWidth = 21.43;
-            worksheetMQ.Columns["C:C"].ColumnWidth = 43.57;
-            worksheetMQ.Columns["D:D"].ColumnWidth = 5.43;
-            worksheetMQ.Columns["E:E"].ColumnWidth = 12.43;
-            worksheetMQ.Columns["F:F"].ColumnWidth = 13.29;
-            worksheetMQ.Columns["G:G"].ColumnWidth = 13.29;
-            worksheetMQ.Columns["H:H"].ColumnWidth = 15.86;
+            worksheetBQ.Columns["A:A"].ColumnWidth = 4.57;
+            worksheetBQ.Columns["B:B"].ColumnWidth = 21.43;
+            worksheetBQ.Columns["C:C"].ColumnWidth = 43.57;
+            worksheetBQ.Columns["D:D"].ColumnWidth = 5.43;
+            worksheetBQ.Columns["E:E"].ColumnWidth = 12.43;
+            worksheetBQ.Columns["F:F"].ColumnWidth = 13.29;
+            worksheetBQ.Columns["G:G"].ColumnWidth = 13.29;
+            worksheetBQ.Columns["H:H"].ColumnWidth = 15.86;
 
             #endregion // Columns Width
 
             #region HEADER - 1ST ROW - "Bill of Quantities"
 
             // header cells merge
-            worksheetMQ.Range["B12:B13"].Merge();
-            worksheetMQ.Range["C12:C13"].Merge();
-            worksheetMQ.Range["D12:D13"].Merge();
-            worksheetMQ.Range["E12:E13"].Merge();
-            worksheetMQ.Range["F12:F13"].Merge();
-            worksheetMQ.Range["G12:H12"].Merge();
+            worksheetBQ.Range["B12:B13"].Merge();
+            worksheetBQ.Range["C12:C13"].Merge();
+            worksheetBQ.Range["D12:D13"].Merge();
+            worksheetBQ.Range["E12:E13"].Merge();
+            worksheetBQ.Range["F12:F13"].Merge();
+            worksheetBQ.Range["G12:H12"].Merge();
 
             // header cells names
-            worksheetMQ.Cells[12, 2] = "Nº ART."; //B12
-            worksheetMQ.Cells[12, 3] = "DESIGNATION"; //C12
-            worksheetMQ.Cells[12, 4] = "UN"; //D12
-            worksheetMQ.Cells[12, 5] = "QUANT."; //E12
-            worksheetMQ.Cells[12, 6].Style.WrapText = true; // to visible the line brakes //F12
-            worksheetMQ.Cells[12, 6] = "PRICE\n PER UNIT"; //F12
-            worksheetMQ.Cells[12, 7] = "COST"; //G12
-            worksheetMQ.Cells[13, 7] = "PARTIAL"; //G13
-            worksheetMQ.Cells[13, 8] = "TOTAL"; //H13
+            worksheetBQ.Cells[12, 2] = "Nº ART."; //B12
+            worksheetBQ.Cells[12, 3] = "DESIGNATION"; //C12
+            worksheetBQ.Cells[12, 4] = "UN"; //D12
+            worksheetBQ.Cells[12, 5] = "QUANT."; //E12
+            worksheetBQ.Cells[12, 6].Style.WrapText = true; // to visible the line brakes //F12
+            worksheetBQ.Cells[12, 6] = "PRICE\n PER UNIT"; //F12
+            worksheetBQ.Cells[12, 7] = "COST"; //G12
+            worksheetBQ.Cells[13, 7] = "PARTIAL"; //G13
+            worksheetBQ.Cells[13, 8] = "TOTAL"; //H13
 
             // header cells range
-            Excel.Range rangeH = worksheetMQ.Range["B12:H13"];
+            Excel.Range rangeH = worksheetBQ.Range["B12:H13"];
 
             // header cells style
             rangeH.Style.Font.Name = "Arial";
@@ -273,52 +273,52 @@ namespace BillofQuantities
 
             #region Table filling
 
-            int rowMQ = 14;
+            int rowBQ = 14;
 
-            var MQSSorted = MQS.AsQueryable().OrderBy(mq => mq.KeyValue).ToList();
+            var BQSSorted = BQS.AsQueryable().OrderBy(bq => bq.KeyValue).ToList();
 
-            foreach (var ListMQ in MQSSorted)
+            foreach (var ListBQ in BQSSorted)
             {
-                ++rowMQ; // +1 row
-                worksheetMQ.Cells[rowMQ, 2] = ListMQ.KeyValue;
-                if (ListMQ.KeyValue == "MISSING")
+                ++rowBQ; // +1 row
+                worksheetBQ.Cells[rowBQ, 2] = ListBQ.KeyValue;
+                if (ListBQ.KeyValue == "MISSING")
                 {
-                    Excel.Range range = worksheetMQ.Cells[rowMQ, 2];
+                    Excel.Range range = worksheetBQ.Cells[rowBQ, 2];
                     range.Font.Color = System.Drawing.Color.FromArgb(255, 0, 0); // Missing KeyValue
                 }
 
-                Excel.Range range3 = worksheetMQ.Cells[rowMQ, 3];
+                Excel.Range range3 = worksheetBQ.Cells[rowBQ, 3];
                 range3.Font.Bold = true;
                 range3.Style.WrapText = true;
-                range3.Value = ListMQ.AssemblyDesc;
-                if (ListMQ.AssemblyDesc == "MISSING") range3.Font.Color = System.Drawing.Color.FromArgb(255, 0, 0); // Missing AssemblyDesc
+                range3.Value = ListBQ.AssemblyDesc;
+                if (ListBQ.AssemblyDesc == "MISSING") range3.Font.Color = System.Drawing.Color.FromArgb(255, 0, 0); // Missing AssemblyDesc
 
-                Excel.Range range4 = worksheetMQ.Cells[rowMQ + 1, 3];
-                worksheetMQ.Cells[rowMQ + 1, 3] = ListMQ.KeyText;
-                if (ListMQ.KeyText == "MISSING") range4.Font.Color = System.Drawing.Color.FromArgb(255, 0, 0); // Missing KeynoteText
+                Excel.Range range4 = worksheetBQ.Cells[rowBQ + 1, 3];
+                worksheetBQ.Cells[rowBQ + 1, 3] = ListBQ.KeyText;
+                if (ListBQ.KeyText == "MISSING") range4.Font.Color = System.Drawing.Color.FromArgb(255, 0, 0); // Missing KeynoteText
 
-                worksheetMQ.Cells[rowMQ, 4] = ListMQ.Unit;
+                worksheetBQ.Cells[rowBQ, 4] = ListBQ.Unit;
 
-                worksheetMQ.Range[worksheetMQ.Cells[rowMQ, 4], worksheetMQ.Cells[rowMQ + 1, 4]].Merge();
-                Excel.Range range5 = worksheetMQ.Cells[rowMQ, 5]; // column E
+                worksheetBQ.Range[worksheetBQ.Cells[rowBQ, 4], worksheetBQ.Cells[rowBQ + 1, 4]].Merge();
+                Excel.Range range5 = worksheetBQ.Cells[rowBQ, 5]; // column E
                 range5.NumberFormat = "###0.00"; // column E in euros
-                range5.Value = ListMQ.Quant;
-                worksheetMQ.Range[worksheetMQ.Cells[rowMQ, 5], worksheetMQ.Cells[rowMQ + 1, 5]].Merge();
-                Excel.Range range6 = worksheetMQ.Cells[rowMQ, 6]; // column F
+                range5.Value = ListBQ.Quant;
+                worksheetBQ.Range[worksheetBQ.Cells[rowBQ, 5], worksheetBQ.Cells[rowBQ + 1, 5]].Merge();
+                Excel.Range range6 = worksheetBQ.Cells[rowBQ, 6]; // column F
                 range6.NumberFormat = "###0.00 €"; // column F in euros
-                range6.Value = ListMQ.PrUnit;
-                worksheetMQ.Range[worksheetMQ.Cells[rowMQ, 6], worksheetMQ.Cells[rowMQ + 1, 6]].Merge();
-                Excel.Range range7 = worksheetMQ.Cells[rowMQ, 7]; // column G
+                range6.Value = ListBQ.PrUnit;
+                worksheetBQ.Range[worksheetBQ.Cells[rowBQ, 6], worksheetBQ.Cells[rowBQ + 1, 6]].Merge();
+                Excel.Range range7 = worksheetBQ.Cells[rowBQ, 7]; // column G
                 range7.NumberFormat = "###0.00 €"; // column G in euros
-                range7.Value = ListMQ.Partial;
-                worksheetMQ.Range[worksheetMQ.Cells[rowMQ, 7], worksheetMQ.Cells[rowMQ + 1, 7]].Merge();
-                ++rowMQ; // +1 linha
-                ++rowMQ; // +1 linha
+                range7.Value = ListBQ.Partial;
+                worksheetBQ.Range[worksheetBQ.Cells[rowBQ, 7], worksheetBQ.Cells[rowBQ + 1, 7]].Merge();
+                ++rowBQ; // +1 linha
+                ++rowBQ; // +1 linha
             }
-            Excel.Range range8 = worksheetMQ.Cells[15, 8]; // cell H15
+            Excel.Range range8 = worksheetBQ.Cells[15, 8]; // cell H15
             range8.NumberFormat = "###0.00 €"; // cell H15 in euros
-            range8.Value = "=Sum(G15:G" + rowMQ + ")";
-            worksheetMQ.Range[worksheetMQ.Cells[15, 8], worksheetMQ.Cells[16, 8]].Merge();
+            range8.Value = "=Sum(G15:G" + rowBQ + ")";
+            worksheetBQ.Range[worksheetBQ.Cells[15, 8], worksheetBQ.Cells[16, 8]].Merge();
 
             #endregion // Table filling
 
@@ -327,23 +327,23 @@ namespace BillofQuantities
             // gridlines turned off
             excel.ActiveWindow.DisplayGridlines = false;
             // table aligned
-            worksheetMQ.Range["B15:C" + rowMQ].VerticalAlignment = Excel.XlHAlign.xlHAlignGeneral;
+            worksheetBQ.Range["B15:C" + rowBQ].VerticalAlignment = Excel.XlHAlign.xlHAlignGeneral;
 
-            worksheetMQ.Range["D15:H" + rowMQ].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            worksheetMQ.Range["D15:H" + rowMQ].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            worksheetBQ.Range["D15:H" + rowBQ].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            worksheetBQ.Range["D15:H" + rowBQ].VerticalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
             // table left boarders
-            worksheetMQ.Range["B14:B" + rowMQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
-            worksheetMQ.Range["D14:D" + rowMQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
-            worksheetMQ.Range["F14:F" + rowMQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
-            worksheetMQ.Range["G14:G" + rowMQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
-            worksheetMQ.Range["I14:I" + rowMQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
+            worksheetBQ.Range["B14:B" + rowBQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
+            worksheetBQ.Range["D14:D" + rowBQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
+            worksheetBQ.Range["F14:F" + rowBQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
+            worksheetBQ.Range["G14:G" + rowBQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
+            worksheetBQ.Range["I14:I" + rowBQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeLeft).LineStyle = Excel.XlLineStyle.xlContinuous;
 
             // table bottom boarders
-            worksheetMQ.Range["B" + rowMQ + ":H" + rowMQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous;
+            worksheetBQ.Range["B" + rowBQ + ":H" + rowBQ].Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous;
 
             // Columns B and C text aligned to the left
-            Excel.Range range9 = worksheetMQ.Range["B:C"];
+            Excel.Range range9 = worksheetBQ.Range["B:C"];
             range9.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
 
             #endregion // Table formatting

@@ -17,7 +17,7 @@ namespace BillofQuantities
         public static bool elementTypesSheet { get; set; }
         public static bool billofQuantitiesSheet { get; set; }
     }
-    public class ListEI
+    public class EI
     {
         public int ID { get; set; }
         public int IsType { get; set; }
@@ -31,7 +31,7 @@ namespace BillofQuantities
         public string Length { get; set; }
     }
 
-    public class ListET
+    public class ET
     {
         public int ID { get; set; } // ListaET sorted by ID
         public int IsType { get; set; }
@@ -50,11 +50,11 @@ namespace BillofQuantities
         public string KeyText { get; set; }
     }
 
-    public class ListMQ
+    public class BQ
     {
         public string AssemblyCode { get; set; }
         public string AssemblyDesc { get; set; }
-        public string KeyValue { get; set; } // ListaMQ sorted by KeyValue
+        public string KeyValue { get; set; } // ListaBQ sorted by KeyValue
         public string KeyText { get; set; }
         public string Unit { get; set; }
         public string Quant { get; set; }

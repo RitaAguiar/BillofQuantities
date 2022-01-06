@@ -19,7 +19,7 @@ namespace BillofQuantities
         //Stopwatch sw_EI_ET = Stopwatch.StartNew();
         Stopwatch sw_EI = Stopwatch.StartNew();
         Stopwatch sw_ET = Stopwatch.StartNew();
-        Stopwatch sw_MQ = Stopwatch.StartNew();
+        Stopwatch sw_BQ = Stopwatch.StartNew();
         Stopwatch sw_Data = Stopwatch.StartNew();
         static Stopwatch sw_descunid = Stopwatch.StartNew();
         static Stopwatch sw_Quant = Stopwatch.StartNew();
@@ -36,8 +36,8 @@ namespace BillofQuantities
         //Additional Instance Parameters
         public static List<string> paramNamesEI = new List<string>(new string[] { "Volume", "Area", "Length" });
 
-        internal static List<ListET> ETS = null;
-        internal static List<ListEI> EIS = null;
+        internal static List<ET> ETS = null;
+        internal static List<EI> EIS = null;
 
         static bool IsMissing = true;
 
@@ -99,9 +99,9 @@ namespace BillofQuantities
 
             #endregion // Report docTitle
 
-            List<ListEI> EIData = retrieveDataEI();
+            List<EI> EIData = retrieveDataEI();
 
-            List<ListET> ETData = retrieveDataET(uiapp);
+            List<ET> ETData = retrieveDataET(uiapp);
 
             //Lauch Excel
             ExcelUtils.LauchExcel();
@@ -121,9 +121,9 @@ namespace BillofQuantities
             }
             if (InputData.billofQuantitiesSheet == true)
             {
-                sw_MQ.Restart();
+                sw_BQ.Restart();
                 ExcelUtils.CreateBillofQuantitiesSpreadsheet(uiapp, ETData, docTitle);
-                sw_MQ.Stop();
+                sw_BQ.Stop();
             }
 
             ExcelUtils.EnableInteraction();
@@ -146,7 +146,7 @@ namespace BillofQuantities
                     "For more info check the report: " + folderPath + @"\ClassReport_" + docTitle + ".txt\n" +
                     "The export is finished. Time: " + sw.Elapsed.TotalSeconds + " seconds.\n" +
                     //"Tempo Tabelas EI e ET " + sw_EI_ET.Elapsed.TotalSeconds +
-                    "\nTime table MQ " + sw_MQ.Elapsed.TotalSeconds + ":\nTime Data " + sw_Data.Elapsed.TotalSeconds +
+                    "\nTime table BQ " + sw_BQ.Elapsed.TotalSeconds + ":\nTime Data " + sw_Data.Elapsed.TotalSeconds +
                     ":\nTime desc unid " + sw_descunid.Elapsed.TotalSeconds + ", Time Quant " + sw_Quant.Elapsed.TotalSeconds));
 
             //Dialog Box to inform the user that all elements' classifications have been found
@@ -157,7 +157,7 @@ namespace BillofQuantities
                     "For more info check the report: " + folderPath + @"\ClassReport_" + docTitle + ".txt\n" +
                     "The export is finished. Time: " + sw.Elapsed.TotalSeconds + " seconds.\n" +
                     //"Time tables EI and ET " + sw_EI_ET.Elapsed.TotalSeconds +
-                    "\nTime table MQ " + sw_MQ.Elapsed.TotalSeconds + ":\nTime Data " + sw_Data.Elapsed.TotalSeconds +
+                    "\nTime table BQ " + sw_BQ.Elapsed.TotalSeconds + ":\nTime Data " + sw_Data.Elapsed.TotalSeconds +
                     ":\nTime desc unid " + sw_descunid.Elapsed.TotalSeconds + ", Time Quant " + sw_Quant.Elapsed.TotalSeconds));
 
                 // writes on the .txt report that there are no parameters to classify
@@ -174,15 +174,15 @@ namespace BillofQuantities
 
         #region Data EI
 
-        public static List<ListEI> retrieveDataEI()
+        public static List<EI> retrieveDataEI()
         {
             List<ElementId> ElementIdEI = new List<ElementId>();
 
-            EIS = new List<ListEI>();
+            EIS = new List<EI>();
 
             foreach (Element eI in collectorEI)
             {
-                var EI = new ListEI
+                var EI = new EI
                 {
                     ID = eI.Id.IntegerValue,
                     IsType = eI is ElementType ? 1 : 0,
@@ -230,14 +230,14 @@ namespace BillofQuantities
 
         #region Data ET
 
-        public static List<ListET> retrieveDataET(UIApplication uiapp)
+        public static List<ET> retrieveDataET(UIApplication uiapp)
         {
 
-            ETS = new List<ListET>();
+            ETS = new List<ET>();
 
             foreach (Element eT in ETypes)
             {
-                var ET = new ListET();
+                var ET = new ET();
 
                 try
                 {
@@ -331,11 +331,11 @@ namespace BillofQuantities
         }
         #endregion Data ET
 
-        #region Data MQ
+        #region Data BQ
 
-        public static List<ListMQ> RetrieveMQData(UIApplication uiapp, List<ListET> ETS)
+        public static List<BQ> RetrieveBQData(UIApplication uiapp, List<ET> ETS)
         {
-            List<ListMQ> MQS = new List<ListMQ>();
+            List<BQ> BQS = new List<BQ>();
 
             sw_descunid.Reset();
             sw_Quant.Reset();
@@ -346,30 +346,30 @@ namespace BillofQuantities
             {
                 List<Element> ListEI = collectorEI.Where(q => q.GetTypeId() == eT.Id).ToList();  // new ListEI with all instances of Type Id
 
-                var MQ = new ListMQ();
+                var BQ = new BQ();
 
                 if (eT != null)
                 {
                     if (eT.Category.Name == "Mass") // Mass Category
                     {
-                        MQ.AssemblyCode = "*NA*";
-                        MQ.AssemblyDesc = "MISCELLANEOUS VOLUMETRIES";
-                        MQ.KeyValue = "Mass";
-                        MQ.KeyText = "Miscellaneous.";
+                        BQ.AssemblyCode = "*NA*";
+                        BQ.AssemblyDesc = "MISCELLANEOUS VOLUMETRIES";
+                        BQ.KeyValue = "Mass";
+                        BQ.KeyText = "Miscellaneous.";
                     }
 
-                    MQ.AssemblyCode = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_CODE);
-                    MQ.AssemblyDesc = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_DESCRIPTION);
-                    MQ.KeyValue = GetBuiltInParamValue(eT, BuiltInParameter.KEYNOTE_PARAM);
+                    BQ.AssemblyCode = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_CODE);
+                    BQ.AssemblyDesc = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_DESCRIPTION);
+                    BQ.KeyValue = GetBuiltInParamValue(eT, BuiltInParameter.KEYNOTE_PARAM);
 
-                    MQ.KeyText = GetKeynoteText(MQ.KeyValue, uiapp);
-                    if (MQ.KeyText == null || MQ.KeyText == "")
+                    BQ.KeyText = GetKeynoteText(BQ.KeyValue, uiapp);
+                    if (BQ.KeyText == null || BQ.KeyText == "")
                     {
-                        MQ.KeyText = "MISSING";
+                        BQ.KeyText = "MISSING";
                     }
 
                     // eT parameters values were not found created
-                    else if (MQ.AssemblyCode == "MISSING" && MQ.AssemblyDesc == "MISSING" || MQ.KeyValue == "MISSING" && MQ.KeyText == "MISSING")
+                    else if (BQ.AssemblyCode == "MISSING" && BQ.AssemblyDesc == "MISSING" || BQ.KeyValue == "MISSING" && BQ.KeyText == "MISSING")
                     {
                         writetxt.WriteLine($"The Element Type " + eT.Name + " with Id " + eT.Id.IntegerValue + " does not have a value for the Assembly Code or the Keynote\n");
                     }
@@ -377,12 +377,12 @@ namespace BillofQuantities
                     //Units and Costs
                     sw_Quant.Start();
 
-                    if (MQ.Unit == null || MQ.Unit.ToString() == "") MQ.Unit = "vg";
+                    if (BQ.Unit == null || BQ.Unit.ToString() == "") BQ.Unit = "vg";
 
                     string instances = null;
                     string paramValue = null;
 
-                    switch (MQ.Unit.ToString())
+                    switch (BQ.Unit.ToString())
                     {
                         // converts the parameter value
                         case "m3":
@@ -406,27 +406,27 @@ namespace BillofQuantities
                             break;
                     }
 
-                    MQ.GetType().GetProperty("Quant").SetValue(MQ, paramValue);
+                    BQ.GetType().GetProperty("Quant").SetValue(BQ, paramValue);
 
                     index++;
 
                     sw_Quant.Stop();
 
                     // Price per unit
-                    MQ.PrUnit = GetParameterValue(eT.LookupParameter("Cost"));
+                    BQ.PrUnit = GetParameterValue(eT.LookupParameter("Cost"));
 
                     // Partial costs
-                    double PartialCost = Convert.ToDouble(MQ.Quant) * Convert.ToDouble(MQ.PrUnit);
-                    MQ.Partial = PartialCost.ToString();
+                    double PartialCost = Convert.ToDouble(BQ.Quant) * Convert.ToDouble(BQ.PrUnit);
+                    BQ.Partial = PartialCost.ToString();
 
-                    MQS.Add(MQ);
+                    BQS.Add(BQ);
                 }
             }
 
-            return MQS;
+            return BQS;
         }
 
-        #endregion Data MQ
+        #endregion Data BQ
 
         #region GetKeynoteTable Method
         public static KeyBasedTreeEntries GetKeynoteEntries(UIApplication uiapp)
