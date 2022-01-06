@@ -186,7 +186,7 @@ namespace BillofQuantities
             foreach (Element eI in CollectorEI)
             {
                 var EI = new EI(eI);
-                
+
                 foreach (string paramName in paramNamesEI)
                 {
                     string paramValue = "*NA*";
@@ -223,21 +223,10 @@ namespace BillofQuantities
             {
                 var ET = new ET(eT, CollectorEI);
 
-                foreach (string paramName in paramNamesEI)
-                {
-                    foreach (Element eI in ET.InstancesOfType)
-                    {
-                        if (eI.LookupParameter(paramName) != null)
-                        {
-                            Parameter p = eI.LookupParameter(paramName);
-
-                            double paramValue = Convert.ToDouble(GetParameterValue(p));
-
-                            double value = Convert.ToDouble(ET.GetType().GetProperty("Total" + paramName).GetValue(ET)); // gets the value of the ET property
-                            ET.GetType().GetProperty("Total" + paramName).SetValue(ET, (value + paramValue).ToString()); // defines the value of the ET property
-                        }
-                    }
-                }
+                ET.TotalVolume = GetTotalDim(ET, "Volume");
+                ET.TotalArea = GetTotalDim(ET, "Area");
+                ET.TotalLength = GetTotalDim(ET, "Length");
+                //Need to solve the units based on either imperial or metric...
 
                 ETS.Add(ET);
             }
@@ -248,6 +237,25 @@ namespace BillofQuantities
             return ETSSorted;
         }
         #endregion Data ET
+
+        public static string GetTotalDim(ET eT, string paramName)
+        {
+            double total = 0;
+            foreach (Element eI in eT.InstancesOfType)
+            {
+                if (eI.LookupParameter(paramName) != null)
+                {
+                    Parameter p = eI.LookupParameter(paramName);
+
+                    double paramValue = Convert.ToDouble(GetParameterValue(p));
+
+                    total += paramValue;
+                }
+            }
+
+            return total.ToString();
+        }
+
 
         #region Data BQ
 
