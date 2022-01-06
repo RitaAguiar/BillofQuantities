@@ -55,10 +55,10 @@ namespace BillofQuantities
             worksheetEI.Cells[rowEI, columnEI++] = "Type Name Id";
             worksheetEI.Cells[rowEI, columnEI++] = "Family Name"; // column 6
 
-            foreach (string paramName in paramNamesEI)
+            foreach (string paramName in paramNamesEI) // writes paramName after column 7
             {
-                worksheetEI.Cells[1, columnEI] = paramName; // writes paramName after column 7
-                ++columnEI; // +1 column 8
+                worksheetEI.Cells[1, columnEI] = paramName; 
+                ++columnEI;
             }
 
             // Fitting
@@ -160,7 +160,7 @@ namespace BillofQuantities
                 else worksheetET.Cells[rowET, columnET++] = "*NA*";
                 if (ListET.TotalLength != null) worksheetET.Cells[rowET, columnET++] = ListET.TotalLength; // column 10 - Total Length de eT
                 else worksheetET.Cells[rowET, columnET++] = "*NA*";
-                worksheetET.Cells[rowET, columnET++] = ListET.Costunit; // column 11 - Total Cost of eT
+                worksheetET.Cells[rowET, columnET++] = ListET.Cost; // column 11 - Total Cost of eT
                 worksheetET.Cells[rowET, columnET++] = ListET.AssemblyCode; // column 18 - AssemblyCode of eT
                 worksheetET.Cells[rowET, columnET++] = ListET.AssemblyDesc; // column 19 - AssemblyDesc of eT
                 worksheetET.Cells[rowET, columnET++] = ListET.KeyValue; // column 20 - KeyValue of eT

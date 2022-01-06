@@ -43,7 +43,8 @@ namespace BillofQuantities
         public string TotalVolume { get; set; }
         public string TotalArea { get; set; }
         public string TotalLength { get; set; }
-        public string Costunit { get; set; }
+        public string Cost { get; set; }
+        public string Unit { get; set; }
         public string AssemblyCode { get; set; }
         public string AssemblyDesc { get; set; }
         public string KeyValue { get; set; }

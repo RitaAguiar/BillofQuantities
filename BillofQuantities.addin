@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
   <AddIn Type="Application">
-    <Name>MapaQuantidades</Name>
-    <Assembly>C:\Users\Rita\OneDrive - BUILT COLAB\Documentos\Plugins\MapaQuantidades.dll</Assembly>
+    <Name>BillOfQuantities</Name>
+    <Assembly>\%AppData%\Roaming\Autodesk\Revit\Addins\2021\BillofQuantities.dll</Assembly>
     <ClientId>0f1c5d2d-332e-4fb4-8cd4-fb0c5b286f37</ClientId>
-    <FullClassName>MapaQuantidades.Application</FullClassName>    
+    <FullClassName>BillofQuantities.Application</FullClassName>    
     <VendorId>Rita Aguiar</VendorId>
     <VendorDescription>Rita Aguiar, rita.aguiar@outlook.com</VendorDescription>
   </AddIn>

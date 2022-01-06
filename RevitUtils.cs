@@ -300,12 +300,16 @@ namespace BillofQuantities
                 // Element Type's cost per unit
                 try
                 {
-                    ET.Costunit = GetParameterValue(eT.LookupParameter("Cost"));
+                    ET.Cost = GetParameterValue(eT.LookupParameter("Cost"));
                 }
                 catch
                 {
-                    ET.Costunit = "*NA*";
+                    ET.Cost = "*NA*";
                 }
+
+                //Unit of Cost should depend on a table the user inputs
+                //saying what units he wants for each category...
+                //ET.Unit = "m3";
 
                 #region Classification
 
