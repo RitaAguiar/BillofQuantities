@@ -25,8 +25,8 @@ namespace BillofQuantities
         static Stopwatch sw_Quant = Stopwatch.StartNew();
 
         // CreateBillOfQuantities
-        static List<Element> collectorEI = null;
-        IEnumerable<ElementId> collectorET = null;
+        static List<Element> CollectorEI = null;
+        IEnumerable<ElementId> CollectorET = null;
         List<Element> eTs = new List<Element>();
         string docTitle = null;
         static StreamWriter writetxt = null;
@@ -50,7 +50,7 @@ namespace BillofQuantities
 
             #region Filters
 
-            collectorEI = new FilteredElementCollector(doc) // returns all Instances
+            CollectorEI = new FilteredElementCollector(doc) // returns all Instances
                .WhereElementIsNotElementType()
                 .Where(e => e.IsPhysicalElement())
                 .ToList();
@@ -67,7 +67,7 @@ namespace BillofQuantities
 
             ElementMulticategoryFilter multicatsFilter = new ElementMulticategoryFilter(cats, false);
 
-            collectorET = new FilteredElementCollector(doc) // Returns all Element Types Ids
+            CollectorET = new FilteredElementCollector(doc) // Returns all Element Types Ids
                 .WhereElementIsNotElementType()
                 .WherePasses(multicatsFilter)
                 .Where(e => e.GetTypeId() != null && e.GetTypeId() != ElementId.InvalidElementId)
@@ -79,7 +79,7 @@ namespace BillofQuantities
                 .Select(e => e.GetTypeId()) // selects and retrives the Element Type Ids
                 .Distinct();
 
-            foreach (ElementId eTId in collectorET)
+            foreach (ElementId eTId in CollectorET)
             {
                 ElementType eT = doc.GetElement(eTId) as ElementType;
                 ETypes.Add(eT);
@@ -180,7 +180,7 @@ namespace BillofQuantities
 
             EIS = new List<EI>();
 
-            foreach (Element eI in collectorEI)
+            foreach (Element eI in CollectorEI)
             {
                 var EI = new EI(eI);
                 //{
@@ -237,7 +237,7 @@ namespace BillofQuantities
 
             foreach (Element eT in ETypes)
             {
-                var ET = new ET(eT);
+                var ET = new ET(eT, CollectorEI);
 
                 //try
                 //{
@@ -267,23 +267,23 @@ namespace BillofQuantities
                 //    ET.FamilyName = "*NA*"; // eT does not have a FamilyName
                 //}
 
-                // new ListEI with all instances of Type Id
-                List<Element> ListEI = new List<Element>();
-                try
-                {
-                    ListEI = collectorEI.Where(q => q.GetTypeId() == eT.Id).ToList();
-                }
-                catch
-                {
-                    // When the Id is -1 it means the elements belong to the Parts Category
-                    ListEI = collectorEI.Where(q => q.GetTypeId().IntegerValue == -1).ToList();
-                }
+                //new ListEI with all instances of Type Id
+                //List<Element> ListEI = new List<Element>();
+                //try
+                //{
+                //    ListEI = CollectorEI.Where(q => q.GetTypeId() == eT.Id).ToList();
+                //}
+                //catch
+                //{
+                //    When the Id is -1 it means the elements belong to the Parts Category
+                //   ListEI = CollectorEI.Where(q => q.GetTypeId().IntegerValue == -1).ToList();
+                //}
 
-                ET.Quantity = ListEI.Count();
+                //ET.Quantity = ET.InstancesOfType.Count();
 
                 foreach (string paramName in paramNamesEI)
                 {
-                    foreach (Element eI in ListEI)
+                    foreach (Element eI in ET.InstancesOfType)
                     {
                         if (eI.LookupParameter(paramName) != null)
                         {
@@ -348,7 +348,7 @@ namespace BillofQuantities
 
             foreach (Element eT in ETypes)
             {
-                List<Element> ListEI = collectorEI.Where(q => q.GetTypeId() == eT.Id).ToList();  // new ListEI with all instances of Type Id
+                List<Element> ListEI = CollectorEI.Where(q => q.GetTypeId() == eT.Id).ToList();  // new ListEI with all instances of Type Id
 
                 var BQ = new BQ();
 

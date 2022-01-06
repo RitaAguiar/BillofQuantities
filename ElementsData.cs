@@ -58,8 +58,9 @@ namespace BillofQuantities
         public string AssemblyDesc { get; set; }
         public string KeyValue { get; set; }
         public string KeyText { get; set; }
+        public List<Element> InstancesOfType { get; set; }
 
-        public ET(Element eT)
+        public ET(Element eT, List<Element> collectorEI)
         {
             ID = eT.Id != null ? eT.Id.IntegerValue : -1;
             IsType = 1;
@@ -68,6 +69,10 @@ namespace BillofQuantities
             TypeName = eT.Name != null ? eT.Name : "*NA*";
             FamilyName = eT as FamilySymbol != null ?
                 (eT as FamilySymbol).FamilyName : "*NA*";
+            InstancesOfType = collectorEI.Where(q => (q.GetTypeId() == eT.Id)?
+            (q.GetTypeId() == eT.Id) : (q.GetTypeId().IntegerValue == -1))
+                .ToList(); //    When the Id is -1 it means the elements belong to the Parts Category
+            Quantity = InstancesOfType.Count();
         }
     }
 
