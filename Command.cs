@@ -9,62 +9,6 @@ using System;
 
 namespace BillofQuantities
 {
-    #region Data holding Classes
-    internal static class InputData
-    {
-        public static string folderPath { get; set; }
-        public static bool instancesSheet { get; set; }
-        public static bool elementTypesSheet { get; set; }
-        public static bool billofQuantitiesSheet { get; set; }
-    }
-    public class EI
-    {
-        public int ID { get; set; }
-        public int IsType { get; set; }
-        public string CategoryName { get; set; }
-        public string TypeName { get; set; }
-        public int TypeNameId { get; set; } // ListaEI sorted by TypeNameId
-        public string FamilyName { get; set; }
-        public string Volume { get; set; }
-        public string Area { get; set; }
-        public string Width { get; set; }
-        public string Length { get; set; }
-    }
-
-    public class ET
-    {
-        public int ID { get; set; } // ListaET sorted by ID
-        public int IsType { get; set; }
-        public string CategoryName { get; set; }
-        public int CategoryId { get; set; }
-        public string TypeName { get; set; }
-        public string FamilyName { get; set; }
-        public int Quantity { get; set; }
-        public string TotalVolume { get; set; }
-        public string TotalArea { get; set; }
-        public string TotalLength { get; set; }
-        public string Cost { get; set; }
-        public string Unit { get; set; }
-        public string AssemblyCode { get; set; }
-        public string AssemblyDesc { get; set; }
-        public string KeyValue { get; set; }
-        public string KeyText { get; set; }
-    }
-
-    public class BQ
-    {
-        public string AssemblyCode { get; set; }
-        public string AssemblyDesc { get; set; }
-        public string KeyValue { get; set; } // ListaBQ sorted by KeyValue
-        public string KeyText { get; set; }
-        public string Unit { get; set; }
-        public string Quant { get; set; }
-        public string PrUnit { get; set; }
-        public string Partial { get; set; }
-    }
-
-    #endregion Data holding Classes
-
     [Transaction(TransactionMode.ReadOnly)]
     public class Command : IExternalCommand
     {

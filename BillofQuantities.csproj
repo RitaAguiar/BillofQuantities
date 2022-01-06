@@ -70,6 +70,7 @@
     <Compile Include="Application.cs" />
     <Compile Include="Availability.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="ElementsData.cs" />
     <Compile Include="ExcelUtils.cs" />
     <Compile Include="BillofQuantitiesForm.cs">
       <SubType>Form</SubType>

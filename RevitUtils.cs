@@ -182,27 +182,27 @@ namespace BillofQuantities
 
             foreach (Element eI in collectorEI)
             {
-                var EI = new EI
-                {
-                    ID = eI.Id.IntegerValue,
-                    IsType = eI is ElementType ? 1 : 0,
-                    CategoryName = eI.Category.Name,
-                    TypeName = eI.Name,
-                    TypeNameId = eI.GetTypeId().IntegerValue
-                };
+                var EI = new EI(eI);
+                //{
+                //    ID = eI.Id.IntegerValue,
+                //    IsType = 0,
+                //    CategoryName = eI.Category.Name,
+                //    TypeName = eI.Name,
+                //    TypeNameId = eI.GetTypeId().IntegerValue,
+                //};
 
-                try // eI is a Family Instance - eI as FamilySymbol to get its FamilyName
-                {
-                    FamilyInstance eIFamilyInstance = eI as FamilyInstance;
-                    FamilySymbol eIFamilySymbol = eIFamilyInstance.Symbol;
-                    Family eIFamily = eIFamilySymbol.Family;
-                    string eIFamilyName = eIFamily.Name;
-                    EI.FamilyName = eIFamilyName;
-                }
-                catch // eI is not a Family Instance
-                {
-                    EI.FamilyName = "*NA*";
-                }
+                //try // eI is a Family Instance - eI as FamilySymbol to get its FamilyName
+                //{
+                //    FamilyInstance eIFamilyInstance = eI as FamilyInstance;
+                //    FamilySymbol eIFamilySymbol = eIFamilyInstance.Symbol;
+                //    Family eIFamily = eIFamilySymbol.Family;
+                //    string eIFamilyName = eIFamily.Name;
+                //    EI.FamilyName = eIFamilyName;
+                //}
+                //catch // eI is not a Family Instance
+                //{
+                //    EI.FamilyName = "*NA*";
+                //}
 
                 foreach (string paramName in paramNamesEI)
                 {
@@ -237,35 +237,35 @@ namespace BillofQuantities
 
             foreach (Element eT in ETypes)
             {
-                var ET = new ET();
+                var ET = new ET(eT);
 
-                try
-                {
-                    ET.ID = eT.Id.IntegerValue;
-                    ET.IsType = eT is ElementType ? 1 : 0;
-                    ET.CategoryName = eT.Category.Name;
-                    ET.CategoryId = eT.Category.Id.IntegerValue;
-                    ET.TypeName = eT.Name;
-                }
-                catch
-                {
-                    ET.ID = -1;
-                    ET.IsType = eT is ElementType ? 1 : 0;
-                    ET.CategoryName = "*NA*";
-                    ET.CategoryId = -1;
-                    ET.TypeName = "*NA*";
-                }
+                //try
+                //{
+                //    ET.ID = eT.Id.IntegerValue;
+                //    ET.IsType = eT is ElementType ? 1 : 0;
+                //    ET.CategoryName = eT.Category.Name;
+                //    ET.CategoryId = eT.Category.Id.IntegerValue;
+                //    ET.TypeName = eT.Name;
+                //}
+                //catch
+                //{
+                //    ET.ID = -1;
+                //    ET.IsType = eT is ElementType ? 1 : 0;
+                //    ET.CategoryName = "*NA*";
+                //    ET.CategoryId = -1;
+                //    ET.TypeName = "*NA*";
+                //}
 
-                try
-                {
-                    FamilySymbol eTFamilySymbol = eT as FamilySymbol; // FamilySymbol of eT
-                    string eTFamilyName = eTFamilySymbol.FamilyName; //  FamilyName of eTFamilySymbol
-                    ET.FamilyName = eTFamilyName;
-                }
-                catch
-                {
-                    ET.FamilyName = "*NA*"; // eT does not have a FamilyName
-                }
+                //try
+                //{
+                //    FamilySymbol eTFamilySymbol = eT as FamilySymbol; // FamilySymbol of eT
+                //    string eTFamilyName = eTFamilySymbol.FamilyName; //  FamilyName of eTFamilySymbol
+                //    ET.FamilyName = eTFamilyName;
+                //}
+                //catch
+                //{
+                //    ET.FamilyName = "*NA*"; // eT does not have a FamilyName
+                //}
 
                 // new ListEI with all instances of Type Id
                 List<Element> ListEI = new List<Element>();
