@@ -92,5 +92,24 @@ namespace BillofQuantities
         public string Quant { get; set; }
         public string PrUnit { get; set; }
         public string Partial { get; set; }
+
+        public BQ(Element eT)
+        {
+            if (eT.Category.Name == "Mass") // Mass Category
+            {
+                AssemblyCode = "*NA*";
+                AssemblyDesc = "MISCELLANEOUS VOLUMETRIES";
+                KeyValue = "Mass";
+                KeyText = "Miscellaneous.";
+            }
+            else
+            {
+                AssemblyCode = RevitUtils.GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_CODE);
+                AssemblyDesc = RevitUtils.GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_DESCRIPTION);
+                KeyValue = RevitUtils.GetBuiltInParamValue(eT, BuiltInParameter.KEYNOTE_PARAM);
+                KeyText = RevitUtils.GetKeynoteText(KeyValue);
+                if (string.IsNullOrEmpty(KeyText)) KeyText = "MISSING";
+            }
+        }
     }
 }

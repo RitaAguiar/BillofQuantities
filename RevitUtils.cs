@@ -272,30 +272,32 @@ namespace BillofQuantities
             {
                 List<Element> ListEI = CollectorEI.Where(q => q.GetTypeId() == eT.Id).ToList();  // new ListEI with all instances of Type Id
 
-                var BQ = new BQ();
+                if (eT == null) continue;
+
+                var BQ = new BQ(eT);
 
                 if (eT != null)
                 {
-                    if (eT.Category.Name == "Mass") // Mass Category
-                    {
-                        BQ.AssemblyCode = "*NA*";
-                        BQ.AssemblyDesc = "MISCELLANEOUS VOLUMETRIES";
-                        BQ.KeyValue = "Mass";
-                        BQ.KeyText = "Miscellaneous.";
-                    }
+                    //if (eT.Category.Name == "Mass") // Mass Category
+                    //{
+                    //    BQ.AssemblyCode = "*NA*";
+                    //    BQ.AssemblyDesc = "MISCELLANEOUS VOLUMETRIES";
+                    //    BQ.KeyValue = "Mass";
+                    //    BQ.KeyText = "Miscellaneous.";
+                    //}
 
-                    BQ.AssemblyCode = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_CODE);
-                    BQ.AssemblyDesc = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_DESCRIPTION);
-                    BQ.KeyValue = GetBuiltInParamValue(eT, BuiltInParameter.KEYNOTE_PARAM);
+                    //BQ.AssemblyCode = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_CODE);
+                    //BQ.AssemblyDesc = GetBuiltInParamValue(eT, BuiltInParameter.UNIFORMAT_DESCRIPTION);
+                    //BQ.KeyValue = GetBuiltInParamValue(eT, BuiltInParameter.KEYNOTE_PARAM);
 
-                    BQ.KeyText = GetKeynoteText(BQ.KeyValue);
-                    if (BQ.KeyText == null || BQ.KeyText == "")
-                    {
-                        BQ.KeyText = "MISSING";
-                    }
+                    //BQ.KeyText = GetKeynoteText(BQ.KeyValue);
+                    //if (BQ.KeyText == null || BQ.KeyText == "")
+                    //{
+                    //    BQ.KeyText = "MISSING";
+                    //}
 
                     // eT parameters values were not found created
-                    else if (BQ.AssemblyCode == "MISSING" && BQ.AssemblyDesc == "MISSING" || BQ.KeyValue == "MISSING" && BQ.KeyText == "MISSING")
+                    if (BQ.AssemblyCode == "MISSING" && BQ.AssemblyDesc == "MISSING" || BQ.KeyValue == "MISSING" && BQ.KeyText == "MISSING")
                     {
                         writetxt.WriteLine($"The Element Type " + eT.Name + " with Id " + eT.Id.IntegerValue + " does not have a value for the Assembly Code or the Keynote\n");
                     }
